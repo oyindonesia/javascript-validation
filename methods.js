@@ -7,9 +7,8 @@ const requireParameterCount = ($count, $parameters) => {
 };
 
 const getSize = (attribute, value) => {
-  
-	if (_.isNumber(value)) {
-		return value;
+	if (_.isNumber(parseInt(value))) {
+		return parseInt(value);
 	} else if (_.isArray(value)) {
 		return value.length;
 	} else if (value instanceof File) {
@@ -155,8 +154,7 @@ export default {
 	min: (attribute, value, parameters) => {
 		// TODO: max validator  
 		requireParameterCount(1, parameters, 'max');
-
-		return getSize(attribute, value) >= parameters[0];
+		return getSize(attribute, value) >= parseInt(parameters[0]);
 	},
 	mimes: (attribute, value, parameters) => {
 		// TODO: mimes validator  
@@ -172,7 +170,7 @@ export default {
 	max: (attribute, value, parameters) => {
 		requireParameterCount(1, parameters, 'max');
     
-		return getSize(attribute, value) <= parameters[0];
+		return getSize(attribute, value) <= parseInt(parameters[0]);
 	},
 	nullable: () => {
 		// TODO: nullable validator  
@@ -181,7 +179,7 @@ export default {
 		// TODO: notIn validator  
 	},
 	numeric: (attribute, value) => {
-		return _.isNumber(value);
+		return _.isNumber(parseInt(value));
 	},
 	present: () => {
 		// TODO: present validator  

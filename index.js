@@ -1,6 +1,6 @@
       
 import _ from 'lodash';
-import validateAttributes from './concerns/ValidatesAttributes';
+import validateAttributes from './methods';
 // (function () {
 // 	let logger = document.getElementById('root');
 // 	console.log = (...message) => {
@@ -12,23 +12,39 @@ import validateAttributes from './concerns/ValidatesAttributes';
 // 	};
 // })();
 // TODO: Create validate function
+const messages = {
+	required: 'The ${attribute} field is required',
+	min: 'Minimum value of ${attribute} is ${parameters[0]}',
+	max: 'Maximum value of ${attribute} is ${parameters[0]}',
+	numeric: 'The ${attribute} must be a numeric',
+};
+
 export const validate = (data, rules) => {
-	_.forEach(data, (v, field) => {
-		const value = data[field];
-		if (!_.isUndefined(rules[field])) {
-			_.forEach(rules[field].split('|'), (va) => {
+	const results = {};
+	_.forEach(data, (v, attribute) => {
+		const value = data[attribute];
+		if (!_.isUndefined(rules[attribute])) {
+			_.forEach(rules[attribute].split('|'), (va) => {
 				if (!_.isUndefined(validateAttributes[va.split(':')[0]])) {
-					const result = validateAttributes[va.split(':')[0]](field, value, va.split(':')[1] ? va.split(':')[1].split(',') : []);
+					const parameters = va.split(':')[1] ? va.split(':')[1].split(',') : [];
 					const validator = va.split(':')[0];
-					console.log(field, validator, result);
+					const result = validateAttributes[va.split(':')[0]](attribute, value, parameters);
+					if (!result) {
+						if (!results[attribute]) {
+							results[attribute] = [];
+						}
+						results[attribute].push(_.template(messages[validator])({attribute, parameters}));
+					}
 				}
 			});
 		}
 	});
+
+	return results;
 };
 
 // let f = new File(['asdasdasd'], 'filename.jpg', {type: 'image/jpeg', lastModified: new Date()});
-// const fields = {
+// const attributes = {
 // 	'first_name': 'Rizal',
 // 	'last_name': 'Zulfikar',
 // 	'email': 'rizal.j.zulfikar@gmail.com',
@@ -43,4 +59,4 @@ export const validate = (data, rules) => {
 // 	'photo': 'required|mimes:image/jpeg|max:1'
 // };
 
-// validate(fields, rules);
+// validate(attributes, rules);
