@@ -27,20 +27,20 @@ export const validate = (data, rules) => {
 	});
 };
 
-let f = new File(['asdasdasd'], 'filename.jpg', {type: 'image/jpeg', lastModified: new Date()});
-const fields = {
-	'first_name': 'Rizal',
-	'last_name': 'Zulfikar',
-	'email': 'rizal.j.zulfikar@gmail.com',
-	'age': 2,
-	'photo': f
-};
-const rules = {
-	'first_name': 'required|string',
-	'last_name': 'required|string|email',
-	'email': 'required|email',
-	'age': 'required|numeric|max:3|min:2',
-	'photo': 'required|mimes:image/jpeg|max:1'
-};
+// let f = new File(['asdasdasd'], 'filename.jpg', {type: 'image/jpeg', lastModified: new Date()});
+// const fields = {
+// 	'first_name': 'Rizal',
+// 	'last_name': 'Zulfikar',
+// 	'email': 'rizal.j.zulfikar@gmail.com',
+// 	'age': 2,
+// 	'photo': f
+// };
+// const rules = {
+// 	'first_name': 'required|string',
+// 	'last_name': 'required|string|email',
+// 	'email': 'required|email',
+// 	'age': 'required|numeric|max:3|min:2',
+// 	'photo': 'required|mimes:image/jpeg|max:1'
+// };
 
-validate(fields, rules);
+// validate(fields, rules);
