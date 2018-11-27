@@ -17,13 +17,15 @@ export const validate = (data, rules) => {
 	const results = {};
 	_.forEach(data, (v, attribute) => {
 		const value = data[attribute];
-		results[attribute] = [];
 		if (!_.isUndefined(rules[attribute])) {
 			_.forEach(rules[attribute].split('|'), (va) => {
 				if (!_.isUndefined(methods[va.split(':')[0]])) {
 					const parameters = va.split(':')[1] ? va.split(':')[1].split(',') : [];
 					const validator = va.split(':')[0];
 					const result = methods[va.split(':')[0]](attribute, value, parameters);
+					if (!results[attribute] && !result) {
+						results[attribute] = [];
+					}
 					if (!result) {
 						results[attribute].push(_.template(messages[validator])({attribute, parameters}));
 					}
