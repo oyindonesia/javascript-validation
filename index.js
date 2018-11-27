@@ -1,6 +1,7 @@
       
 import _ from 'lodash';
-import validateAttributes from './methods';
+import methods from './methods';
+import messages from './messages';
 // (function () {
 // 	let logger = document.getElementById('root');
 // 	console.log = (...message) => {
@@ -12,27 +13,18 @@ import validateAttributes from './methods';
 // 	};
 // })();
 // TODO: Create validate function
-const messages = {
-	required: 'The ${attribute} field is required',
-	min: 'Minimum value of ${attribute} is ${parameters[0]}',
-	max: 'Maximum value of ${attribute} is ${parameters[0]}',
-	numeric: 'The ${attribute} must be a numeric',
-};
-
 export const validate = (data, rules) => {
 	const results = {};
 	_.forEach(data, (v, attribute) => {
 		const value = data[attribute];
+		results[attribute] = [];
 		if (!_.isUndefined(rules[attribute])) {
 			_.forEach(rules[attribute].split('|'), (va) => {
-				if (!_.isUndefined(validateAttributes[va.split(':')[0]])) {
+				if (!_.isUndefined(methods[va.split(':')[0]])) {
 					const parameters = va.split(':')[1] ? va.split(':')[1].split(',') : [];
 					const validator = va.split(':')[0];
-					const result = validateAttributes[va.split(':')[0]](attribute, value, parameters);
+					const result = methods[va.split(':')[0]](attribute, value, parameters);
 					if (!result) {
-						if (!results[attribute]) {
-							results[attribute] = [];
-						}
 						results[attribute].push(_.template(messages[validator])({attribute, parameters}));
 					}
 				}
@@ -40,7 +32,9 @@ export const validate = (data, rules) => {
 		}
 	});
 
-	return results;
+	return _.transform(results, (r, v, k) => {
+		return r[k] = v.join(', ');
+	});
 };
 
 // let f = new File(['asdasdasd'], 'filename.jpg', {type: 'image/jpeg', lastModified: new Date()});
