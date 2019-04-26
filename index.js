@@ -1,6 +1,7 @@
       
 import _ from 'lodash';
-import validateAttributes from './concerns/ValidatesAttributes';
+import methods from './methods';
+import messages from './messages';
 // (function () {
 // 	let logger = document.getElementById('root');
 // 	console.log = (...message) => {
@@ -13,22 +14,33 @@ import validateAttributes from './concerns/ValidatesAttributes';
 // })();
 // TODO: Create validate function
 export const validate = (data, rules) => {
-	_.forEach(data, (v, field) => {
-		const value = data[field];
-		if (!_.isUndefined(rules[field])) {
-			_.forEach(rules[field].split('|'), (va) => {
-				if (!_.isUndefined(validateAttributes[va.split(':')[0]])) {
-					const result = validateAttributes[va.split(':')[0]](field, value, va.split(':')[1] ? va.split(':')[1].split(',') : []);
+	const results = {};
+	_.forEach(data, (v, attribute) => {
+		const value = data[attribute];
+		if (!_.isUndefined(rules[attribute])) {
+			_.forEach(rules[attribute].split('|'), (va) => {
+				if (!_.isUndefined(methods[va.split(':')[0]])) {
+					const parameters = va.split(':')[1] ? va.split(':')[1].split(',') : [];
 					const validator = va.split(':')[0];
-					console.log(field, validator, result);
+					const result = methods[va.split(':')[0]](attribute, value, parameters);
+					if (!results[attribute] && !result) {
+						results[attribute] = [];
+					}
+					if (!result) {
+						results[attribute].push(_.template(messages[validator])({attribute, parameters}));
+					}
 				}
 			});
 		}
 	});
+
+	return _.transform(results, (r, v, k) => {
+		return r[k] = v.join(', ');
+	});
 };
 
 // let f = new File(['asdasdasd'], 'filename.jpg', {type: 'image/jpeg', lastModified: new Date()});
-// const fields = {
+// const attributes = {
 // 	'first_name': 'Rizal',
 // 	'last_name': 'Zulfikar',
 // 	'email': 'rizal.j.zulfikar@gmail.com',
@@ -43,4 +55,4 @@ export const validate = (data, rules) => {
 // 	'photo': 'required|mimes:image/jpeg|max:1'
 // };
 
-// validate(fields, rules);
+// validate(attributes, rules);
