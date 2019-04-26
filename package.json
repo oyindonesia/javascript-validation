@@ -1,5 +1,9 @@
 {
-  "dependencies": {
-    "lodash": "^4.17.11"
-  }
+  "name": "javascript-validation",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/oyindonesia/javascript-validation.git",
+  "author": "rizaloy <rizal@oyindonesia.com>",
+  "license": "MIT",
+  "private": true
 }
